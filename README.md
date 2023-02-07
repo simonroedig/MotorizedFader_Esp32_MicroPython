@@ -8,7 +8,7 @@ Raspberry Pi Camera with configurable connection modes:
 
 The modes are received by the Raspberry Pi from an interface and sent
 to the Esp32 to set the fader.
-The modes can be also physically changed on the fader and are then
+The modes can also be physically changed on the fader and are then
 sent to the Pi and back to the interfaces' backend.
 
 ![Circuit Diagram](img/circuit.png)
