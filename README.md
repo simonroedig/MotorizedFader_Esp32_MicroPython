@@ -2,6 +2,7 @@ Smart IoT Security & Privacy - Configurable Connection Modes (Hardware Part)
 
 Raspberry Pi Camera with configurable connection modes:
 🔴Offline/None -> 🟡AccessPoint -> 🔵LocalNetwork -> 🟢FullInternet
+
 ![Demo](img/demo.gif)
 
 The modes are received by the Raspberry Pi from an interface and sent
