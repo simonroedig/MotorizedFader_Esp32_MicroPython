@@ -1,5 +1,3 @@
-# Author: Simon Rödig
-
 from machine import Pin, ADC, PWM
 from time import sleep
 from dcmotor import DCMotor
