@@ -203,7 +203,7 @@ def set_offline_slider():
     
 
 while True:
-    
+    """
     # For Testing
     mode_changed("off")
     sleep(5)
@@ -216,10 +216,6 @@ while True:
     """
     check_mode()
     sleep(0.25)
-    """
-    
-    
-
         
 
         
