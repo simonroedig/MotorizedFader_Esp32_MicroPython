@@ -23,7 +23,7 @@ led_fi = Pin(17, Pin.OUT) # green
 
 # -- DC-Motor -- #
 # forward = down to off // backwards = up to full_internet
-dc_frequency = 100
+dc_frequency = 75
 dc_speed = 100
 dc_pin1 = Pin(32, Pin.OUT)    
 dc_pin2 = Pin(33, Pin.OUT)     
@@ -63,7 +63,6 @@ def set_led(mode):
         led_fi.value(1)
 
 def mode_changed(new_mode):
-    
     if (new_mode == "off"):
         pi_in_bit0.value(0)
         pi_in_bit1.value(0)
@@ -204,19 +203,20 @@ def set_offline_slider():
     
 
 while True:
-    """
+    
     # For Testing
     mode_changed("off")
-    sleep(1)
+    sleep(5)
     mode_changed("ap")
-    sleep(1)
+    sleep(5)
     mode_changed("ln")
-    sleep(1)
+    sleep(5)
     mode_changed("fi")
-    sleep(1)
+    sleep(5)
     """
     check_mode()
     sleep(0.25)
+    """
     
     
 
