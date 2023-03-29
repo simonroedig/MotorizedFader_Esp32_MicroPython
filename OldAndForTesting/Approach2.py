@@ -61,7 +61,7 @@ def set_led(mode):
         led_ln.value(0)
         led_fi.value(1)
 
-
+def get_mode_from_slider_and_send_to_raspi():
     # 00 = offline
     wiper_value = wiper.read()
     if ((wiper_value < off + off*10/100) and (wiper_value > off - off*10/100)):
@@ -221,28 +221,31 @@ def set_offline_slider():
     dc_motor.stop()
 
 pi_arr = ["timeX", "timeX+1"]
-slide_arr = ["timeX", "timeX+1"]
+newFromPi = False
 
 while True:
-    pi_arr.append(get_mode_from_raspi())
+    f = get_mode_from_slider()
+    set_led(f)
+    
+    sleep(0.01)
+
+    pi = get_mode_from_raspi()
+    pi_arr.append(pi)
     pi_arr.pop(0)
     if (pi_arr[0] != pi_arr[1]):
-        change_mode(pi_arr[1])
-        set_led(pi_arr[1])
-        sleep(0.1)
+        newFromPi = True
+    else:
+        newFromPi = False
 
-    slide_arr.append(get_mode_from_slider())
-    slide_arr.pop(0)
-    if (slide_arr[0] != slide_arr[1]):
-        while (True):
-            sleep(2)
-            slide_arr.append(get_mode_from_slider())
-            slide_arr.pop(0)
-            if (slide_arr[0] == slide_arr[1]):
-                set_led(slide_arr[1])
-                send_to_raspi(slide_arr[1])
-                break
+    slider = get_mode_from_slider()
+
+    if ((pi != slider) and (slider == f) and newFromPi):
+        set_led(change_mode(pi))
+        send_to_raspi(pi)
+        sleep(0.1)
     
+    if ((pi != slider) and (slider == f) and not newFromPi):
+        send_to_raspi(slider)
 
 
 

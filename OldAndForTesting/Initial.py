@@ -35,6 +35,7 @@ off = 4095
 ap = 3000
 ln = 1400
 fi = 0
+current_mode_arr = ["timeX", "timeX+1"]
 
 def set_led(mode):
     if (mode == "off"):
@@ -61,48 +62,41 @@ def set_led(mode):
         led_ln.value(0)
         led_fi.value(1)
 
-
-    # 00 = offline
-    wiper_value = wiper.read()
-    if ((wiper_value < off + off*10/100) and (wiper_value > off - off*10/100)):
+def mode_changed(new_mode):
+    if (new_mode == "off"):
         pi_in_bit0.value(0)
         pi_in_bit1.value(0)
-        return "off"
-        
-    # 01 = access point
-    if ((wiper_value < ap + ap*10/100) and (wiper_value > ap - ap*10/100)):
+        set_offline_slider()
+    
+    if (new_mode == "ap"):
         pi_in_bit0.value(0)
         pi_in_bit1.value(1)
-        return "ap"
+        set_access_point_slider()
         
-    # 10 = local network
-    if ((wiper_value < ln + ln*10/100) and (wiper_value > ln - ln*10/100)):
+    if (new_mode == "ln"):
         pi_in_bit0.value(1)
         pi_in_bit1.value(0)
-        return "ln"
-    
-    # 11 = full internet
-    if ((wiper_value < fi + fi*10/100) and (wiper_value > fi - fi*10/100)):
-        pi_in_bit0.value(1)
-        pi_in_bit1.value(1)
-        return "fi"
-    
-def send_to_raspi(mode):
-    if (mode == "off"):
-        pi_in_bit0.value(0)
-        pi_in_bit1.value(0)
-    
-    if (mode == "ap"):
-        pi_in_bit0.value(0)
-        pi_in_bit1.value(1)
-        
-    if (mode == "ln"):
-        pi_in_bit0.value(1)
-        pi_in_bit1.value(0)
+        set_local_network_slider()
             
-    if (mode == "fi"):
+    if (new_mode == "fi"):
         pi_in_bit0.value(1)
         pi_in_bit1.value(1)
+        set_full_internet_slider()
+        
+    set_led(new_mode)
+
+        
+def check_mode():
+    current_mode_arr.append(get_mode_from_raspi())
+    current_mode_arr.pop(0)
+    if (current_mode_arr[0] != current_mode_arr[1]):
+        mode_changed(current_mode_arr[1])
+    
+    current_mode_arr.append(get_mode_from_slider())
+    current_mode_arr.pop(0)
+    if (current_mode_arr[0] != current_mode_arr[1]):
+        print("Change on slider occurred")
+        mode_changed(current_mode_arr[1])
 
 def get_mode_from_slider():
     # 00 = offline
@@ -138,19 +132,6 @@ def get_mode_from_raspi():
     # 11 = full internet
     if (pi_out_bit0.value() == 1 and pi_out_bit1.value() == 1):
         return "fi"
-
-def change_mode(new_mode):
-    if (new_mode == "off"):
-        set_offline_slider()
-    
-    if (new_mode == "ap"):
-        set_access_point_slider()
-        
-    if (new_mode == "ln"):
-        set_local_network_slider()
-            
-    if (new_mode == "fi"):
-        set_full_internet_slider()
 
 def set_full_internet_slider():
     wiper_value = wiper.read()
@@ -219,34 +200,22 @@ def set_offline_slider():
     
     print("-> Wiper Value: " + str(wiper_value) + "\n")
     dc_motor.stop()
-
-pi_arr = ["timeX", "timeX+1"]
-slide_arr = ["timeX", "timeX+1"]
+    
 
 while True:
-    pi_arr.append(get_mode_from_raspi())
-    pi_arr.pop(0)
-    if (pi_arr[0] != pi_arr[1]):
-        change_mode(pi_arr[1])
-        set_led(pi_arr[1])
-        sleep(0.1)
-
-    slide_arr.append(get_mode_from_slider())
-    slide_arr.pop(0)
-    if (slide_arr[0] != slide_arr[1]):
-        while (True):
-            sleep(2)
-            slide_arr.append(get_mode_from_slider())
-            slide_arr.pop(0)
-            if (slide_arr[0] == slide_arr[1]):
-                set_led(slide_arr[1])
-                send_to_raspi(slide_arr[1])
-                break
-    
-
-
-
-    
+    """
+    # For Testing
+    mode_changed("off")
+    sleep(5)
+    mode_changed("ap")
+    sleep(5)
+    mode_changed("ln")
+    sleep(5)
+    mode_changed("fi")
+    sleep(5)
+    """
+    check_mode()
+    sleep(0.25)
         
 
         
