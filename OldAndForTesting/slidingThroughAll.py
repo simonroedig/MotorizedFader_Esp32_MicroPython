@@ -1,3 +1,5 @@
+# Erlaubt benutzen vom Slider, led's leuchten dann
+
 from machine import Pin, ADC, PWM
 from time import sleep
 from dcmotor import DCMotor
@@ -77,13 +79,13 @@ def get_mode_from_slider():
         return "ln"
     
     # 11 = full internet
-    if ((wiper_value < fi + fi*10/100) and (wiper_value > fi - fi*10/100)):
+    if ((wiper_value < fi + 200) and (wiper_value > fi - fi*10/100)):
         return "fi"
 
 
 while True:
     set_led(get_mode_from_slider())
-    sleep(0.1)
+    
 
     
 
@@ -100,4 +102,5 @@ while True:
     
     
  
+
 
